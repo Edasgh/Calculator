@@ -62,7 +62,7 @@ operationButtons.forEach((operator) => {
 });
 
 pointButton.addEventListener("click", () => {
-  if (previousInput.value.includes(".") || currentInput.value.includes("."))
+  if (currentInput.value.includes("."))
     return;
   currentInput.value += pointButton.textContent;
 });
