@@ -1,11 +1,12 @@
-const previousInput = document.querySelector("#calculateInputPrev");
-const currentInput = document.querySelector("#calculateInputCurr");
+const previousInput = document.getElementById("calculateInputPrev");
+const currentInput = document.getElementById("calculateInputCurr");
 const numButtons = document.querySelectorAll(".number");
 const operationButtons = document.querySelectorAll(".operator");
 const allClearButton = document.querySelector(".all-clear");
 const deleteButton = document.querySelector(".delete");
-const pointButton = document.querySelector("#point");
-const equalsButton = document.querySelector("#EqualBtn");
+const pointButton = document.getElementById("point");
+const equalsButton = document.getElementById("EqualBtn");
+const zeroBtn = document.getElementById("zeroBtn");
 
 const deletion = () => {
   currentInput.value = currentInput.value.toString().slice(0, -1);
@@ -19,7 +20,15 @@ allClearButton.addEventListener("click", allClear);
 deleteButton.addEventListener("click", deletion);
 numButtons.forEach((numButton) => {
   numButton.addEventListener("click", () => {
+   if(numButton.id=="zeroBtn"){
+   if(currentInput.value=="0"){
+    return;
+   }else{
+      currentInput.value += zeroBtn.textContent;
+   }
+   }else{
     currentInput.value += numButton.textContent;
+   }
   });
 });
 
