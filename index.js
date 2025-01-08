@@ -6,72 +6,89 @@ const allClearButton = document.querySelector(".all-clear");
 const deleteButton = document.querySelector(".delete");
 const pointButton = document.getElementById("point");
 const equalsButton = document.getElementById("EqualBtn");
-const zeroBtn = document.getElementById("zeroBtn");
 
+let currentOperation = undefined;
+
+// Function to delete the last character
 const deletion = () => {
   currentInput.value = currentInput.value.toString().slice(0, -1);
 };
 
+// Function to clear all inputs
 const allClear = () => {
   currentInput.value = "";
   previousInput.value = "";
+  currentOperation = undefined;
 };
+
+// Function to append numbers
+const appendNumber = (number) => {
+  if (number === "0" && currentInput.value === "0") return; // Avoid multiple leading zeros
+  currentInput.value += number;
+};
+
+// Function to handle operation selection
+const chooseOperation = (operation) => {
+  if (currentInput.value === "") return;
+  if (previousInput.value !== "") {
+    compute();
+  }
+  currentOperation = operation;
+  previousInput.value = currentInput.value + " " + operation;
+  currentInput.value = "";
+};
+
+// Function to compute the result
+const compute = () => {
+  if (!currentOperation || currentInput.value === "") return;
+
+  const prev = parseFloat(previousInput.value);
+  const current = parseFloat(currentInput.value);
+
+  if (isNaN(prev) || isNaN(current)) return;
+
+  let computation;
+  switch (currentOperation) {
+    case "+":
+      computation = prev + current;
+      break;
+    case "-":
+      computation = prev - current;
+      break;
+    case "*":
+      computation = prev * current;
+      break;
+    case "/":
+      computation = current !== 0 ? prev / current : "Error";
+      break;
+    default:
+      return;
+  }
+
+  currentInput.value = computation;
+  previousInput.value = "";
+  currentOperation = undefined;
+};
+
+// Event listeners
 allClearButton.addEventListener("click", allClear);
 deleteButton.addEventListener("click", deletion);
+
 numButtons.forEach((numButton) => {
   numButton.addEventListener("click", () => {
-   if(numButton.id=="zeroBtn"){
-   if(currentInput.value=="0"){
-    return;
-   }else{
-      currentInput.value += zeroBtn.textContent;
-   }
-   }else{
-    currentInput.value += numButton.textContent;
-   }
+    appendNumber(numButton.textContent);
   });
 });
 
 operationButtons.forEach((operator) => {
   operator.addEventListener("click", () => {
-    let operation = operator.textContent;
-    if (currentInput.value == "") return;
-    if (previousInput.value.includes(operation)) return;
-    previousInput.value = currentInput.value + operation;
-    currentInput.value = "";
-    equalsButton.addEventListener("click", () => {
-      let computation;
-      let current = parseFloat(currentInput.value);
-      let prev = parseFloat(previousInput.value);
-      if (isNaN(prev) || isNaN(current)) return;
-      if (!current) return;
-      switch (operation) {
-        case "+":
-          computation = prev + current;
-          break;
-        case "-":
-          computation = prev - current;
-          break;
-        case "*":
-          computation = prev * current;
-          break;
-        case "/":
-          computation = prev / current;
-          break;
-
-        default:
-          return;
-      }
-
-      currentInput.value = computation;
-      previousInput.value = "";
-      operation = undefined;
-    });
+    chooseOperation(operator.textContent);
   });
 });
 
+equalsButton.addEventListener("click", compute);
+
 pointButton.addEventListener("click", () => {
-  if (currentInput.value.includes("."))
-    return;
-  currentInput.value += pointButton.textContent;
+  if (currentInput.value.includes(".")) return;
+  currentInput.value += ".";
 });
